@@ -1,0 +1,133 @@
+Can we use POM (page object model ) with appium?
+    yes, same like with selenium.
+How about page factory and @FindBy annotations?
+    also it's the same, plus there are @AndroidBy @IOSBy/@iOSXCUITBy annotations
+How to integrate appium with Jenkins?
+
+    Since it's a java/maven project, it's the same process.
+    The only thing is, what kind of devices to use for testing?
+
+How do I get the app for testing at work?
+
+    To update web version, developers have to deploy it, let's say to test environment.
+    For android/ios app, developers also have to deploy app. Building process of mobile/web application is the same.
+    It's also done by some ci/cd tool like jenkins. The only difference is, after building mobile app.
+    it doesn't go to the application server. You can just take that new .apk file (for android) and install it.
+    With appium, you don't need to install apps manually. In desired capabilities, just put:
+        "app", "http://s3.bucket.com/myproject/application.apk".
+    Then app will downloaded from the cloud and installed on the device before testing.
+
+How about remote execution?
+    There are couple famous web sites that are not free, but very useful for mobile testing.
+    https://www.browserstack.com/
+    https://saucelabs.com/
+    aws device farm
+    Docker container:
+    https://hub.docker.com/r/appium/appium/
+    container has appium server, emulator, vnc viewer. You can very easily scale number of emulators. But, for this solution you need server not VM. In terms of aws, you can use metal instance.
+Docker compose file, that creates selenium grid with 2 mobile devices: galaxy s 6 and nexus 5.
+If you have docker, create docker-compose.yml file with following content.
+version: ‘2’
+services:
+ hub:
+  image: selenium/hub:3.14.0
+  container_name: hub
+  ports:
+   - “4444:4444”
+ samsung_galaxy:
+  image: butomo1989/docker-android-x86-8.1
+  privileged: true
+  depends_on:
+   - hub
+  ports:
+   - “6080:6080"
+  environment:
+   - DEVICE=Samsung Galaxy S6
+   - CONNECT_TO_GRID=True
+   - APPIUM=true
+   - SELENIUM_HOST=hub
+   - MOBILE_WEB_TEST=True
+   - AUTO_RECORD=True
+ nexus:
+  image: butomo1989/docker-android-x86-8.1
+  privileged: true
+  depends_on:
+   - hub
+  ports:
+   - “6081:6080”
+  environment:
+   - DEVICE=Nexus 5
+   - CONNECT_TO_GRID=True
+   - APPIUM=true
+   - SELENIUM_HOST=hub
+   - MOBILE_WEB_TEST=False
+   - AUTO_RECORD=True
+Then save it, and run with following command: docker-compose up -d
+then it will create containers.
+#######################################################
+    We can run mobile chrome browser in 2 modes:
+        as native application (not recommended at all)
+        as a regular browser
+org.openqa.selenium.WebDriverException: An unknown server-side error occurred while processing the command. Original error: No Chromedriver found that can automate Chrome '51.0.2704'. See https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/web/chromedriver.md for more details. You could also try to enable automated chromedrivers download server feature
+either we have to update browser on the device, or we can setup this webdriver for appium server.
+To fix issue with chrome welcome screen: go to settings --> about emulated device --> then click 7 times on the build number --> go back --> click on "Developer Options" --> enable "USB debugging"
+Browserstack docs: https://www.browserstack.com/automate/java
+Ho to provide desired capabilities:
+https://app-automate.browserstack.com/dashboard/v2/get-started
+ case "mobile_chrome_remote":
+                try {
+                    DesiredCapabilities caps = new DesiredCapabilities();
+                    caps.setCapability("browserName", "android");
+                    caps.setCapability("device", "Samsung Galaxy S8");
+                    caps.setCapability("realMobile", "true");
+                    caps.setCapability("os_version", "7.0");
+                    caps.setCapability("name", "VyTrack tests");
+                    driverPool.set(new RemoteWebDriver(new URL(URL), caps));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+####################################
+//we can apply explicit wait here too, like in selenium
+        WebDriverWait wait = new WebDriverWait(driver, 20);
+        wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.AccessibilityId("Views")));
+        driver.findElement(MobileBy.AccessibilityId("Views")).click();
+        MobileElement webview = driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable("
+                + "new UiSelector().scrollable(true)).scrollIntoView("
+                + "new UiSelector().textContains(\"WebView\"));"));
+        //textContains or text or id, className
+        webview.click();
+        //go back
+        driver.navigate().back();
+        MobileElement imageSwitcher = driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable("
+                + "new UiSelector().scrollable(true)).scrollIntoView("
+                + "new UiSelector().textContains(\"ImageSwitcher\"));"));
+        imageSwitcher.click();
+        //if we need to tap on element or use long press, we can use TouchAction class
+        driver.navigate().back();
+        TouchAction touchAction = new TouchAction(driver);
+        //to tap on element
+        //you can chain actions like in Actions class
+        //so you can tap twice
+        //drag and drop: long press then move to target --> build().perform()
+        touchAction.tap(new ElementOption().withElement(imageSwitcher)).perform();
+Because appium is based on selenium, you already know something.
+Many actions are the same:
+    - text input - sendKeys()
+    - click - click()
+    findElement/findElements - >> few more By's
+for example:
+        MobileBy.AccessibilityId --> the best locator, please use it.
+You can also use xpath, name, className
+    To find by text, use xpath: //*[@text()='some text']
+For synchronization issues, use Explicit and Fluent waits. Don't thread sleep (try to not use), expected conditions are almost the same as in selenium
+    Common questions, are like:
+        How appium works:
+            your java code --> appium server --> device (with some framework, like (UiAtomator2, for android), XCUITest for IOS)
+        Appium philosophy ...?????
+            1. App shouldn't be recompiled
+            2. No platform/language dependency.
+            etc...
+- Desired capabilities
+- Types of apps: native, hybrid, web.
+Remote execution: Server, Server with Docker containers, browserStack, SauceLabs, GenyMotion, AWS device farm...
+    For local execution: Android Studio with AVD manager, also you can use genymotion (it has more devices than just google, like Samsung, moto, etc... )

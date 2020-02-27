@@ -16,7 +16,7 @@ import java.net.MalformedURLException;
 
 import java.net.URL;
 
-public class Day01 {
+public class Calculator_App {
 
     AppiumDriver<MobileElement> driver;
 
@@ -131,4 +131,40 @@ public class Day01 {
     public static void main(String[] args) {
         System.out.println();
     }
+
+
+    @Test
+    public void android10() throws Exception{
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        //since we use android, put android. could be IOS
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID);
+        //version of your device
+        desiredCapabilities.setCapability(MobileCapabilityType.VERSION, "10.0");
+        //name of the device
+        //if it's a real device, you need to use your parameter
+        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel_2_API_29_android_10");
+        //either you can specify app --> //path/to/the/app.apk
+        //or, if app is already installed, you need to specify appActivity and AppPackage
+        //this info you can find in the internet, at work - from developers
+        //otherwise, you can use apk info app to find this information
+        desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
+
+        desiredCapabilities.setCapability("app", "https://cybertek-appium.s3.amazonaws.com/etsy.apk");
+//        desiredCapabilities.setCapability("app", "/data/app/com.etsy.android-1/base.apk");
+
+        driver = new AppiumDriver<>(new URL("http://localhost:4723/wd/hub"), desiredCapabilities);
+
+        Thread.sleep(3000);
+
+        MobileElement searchBox = driver.findElement(MobileBy.id("com.etsy.android:id/search_src_text"));
+        Thread.sleep(1000);
+        searchBox.sendKeys("Java", Keys.ENTER);
+        //driver.getKeyboard().pressKey(Keys.ENTER);
+
+        Thread.sleep(6000);
+
+        driver.closeApp();
+    }
+
+
 }

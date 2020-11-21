@@ -24,7 +24,10 @@ How about remote execution?
     aws device farm
     Docker container:
     https://hub.docker.com/r/appium/appium/
-    container has appium server, emulator, vnc viewer. You can very easily scale number of emulators. But, for this solution you need server not VM. In terms of aws, you can use metal instance.
+    container has appium server, emulator, vnc viewer. You can very easily scale number of emulators.
+    But, for this solution you need server not VM. In terms of aws, you can use metal instance.
+
+
 Docker compose file, that creates selenium grid with 2 mobile devices: galaxy s 6 and nexus 5.
 If you have docker, create docker-compose.yml file with following content.
 version: ‘2’
@@ -65,12 +68,24 @@ services:
 Then save it, and run with following command: docker-compose up -d
 then it will create containers.
 #######################################################
+
+
     We can run mobile chrome browser in 2 modes:
         as native application (not recommended at all)
         as a regular browser
-org.openqa.selenium.WebDriverException: An unknown server-side error occurred while processing the command. Original error: No Chromedriver found that can automate Chrome '51.0.2704'. See https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/web/chromedriver.md for more details. You could also try to enable automated chromedrivers download server feature
+org.openqa.selenium.WebDriverException: An unknown server-side error occurred while processing the command.
+Original error: No Chromedriver found that can automate Chrome '51.0.2704'.
+See https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/web/chromedriver.md for more details.
+You could also try to enable automated chromedrivers download server feature
+
 either we have to update browser on the device, or we can setup this webdriver for appium server.
-To fix issue with chrome welcome screen: go to settings --> about emulated device --> then click 7 times on the build number --> go back --> click on "Developer Options" --> enable "USB debugging"
+To fix issue with chrome welcome screen: go to settings
+    --> about emulated device
+    --> then click 7 times on the build number
+    --> go back
+    --> click on "Developer Options"
+    --> enable "USB debugging"
+
 Browserstack docs: https://www.browserstack.com/automate/java
 Ho to provide desired capabilities:
 https://app-automate.browserstack.com/dashboard/v2/get-started
@@ -91,20 +106,26 @@ https://app-automate.browserstack.com/dashboard/v2/get-started
         WebDriverWait wait = new WebDriverWait(driver, 20);
         wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.AccessibilityId("Views")));
         driver.findElement(MobileBy.AccessibilityId("Views")).click();
+
         MobileElement webview = driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable("
                 + "new UiSelector().scrollable(true)).scrollIntoView("
                 + "new UiSelector().textContains(\"WebView\"));"));
-        //textContains or text or id, className
+
+
+//textContains or text or id, className
         webview.click();
-        //go back
+//go back
         driver.navigate().back();
+
         MobileElement imageSwitcher = driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable("
                 + "new UiSelector().scrollable(true)).scrollIntoView("
                 + "new UiSelector().textContains(\"ImageSwitcher\"));"));
         imageSwitcher.click();
-        //if we need to tap on element or use long press, we can use TouchAction class
+
+//if we need to tap on element or use long press, we can use TouchAction class
         driver.navigate().back();
         TouchAction touchAction = new TouchAction(driver);
+
         //to tap on element
         //you can chain actions like in Actions class
         //so you can tap twice
@@ -130,4 +151,5 @@ For synchronization issues, use Explicit and Fluent waits. Don't thread sleep (t
 - Desired capabilities
 - Types of apps: native, hybrid, web.
 Remote execution: Server, Server with Docker containers, browserStack, SauceLabs, GenyMotion, AWS device farm...
-    For local execution: Android Studio with AVD manager, also you can use genymotion (it has more devices than just google, like Samsung, moto, etc... )
+    For local execution: Android Studio with AVD manager,
+    also you can use genymotion (it has more devices than just google, like Samsung, moto, etc... )

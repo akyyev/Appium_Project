@@ -22,15 +22,18 @@
     </build>
 
     <dependencies>
+        <!-- This is appium Java-Client API -->
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
             <version>7.3.0</version>
         </dependency>
+
+        <!-- Just for assertion purposes we will use junit library  -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

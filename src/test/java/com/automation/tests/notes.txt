@@ -96,7 +96,7 @@ https://app-automate.browserstack.com/dashboard/v2/get-started
                     caps.setCapability("device", "Samsung Galaxy S8");
                     caps.setCapability("realMobile", "true");
                     caps.setCapability("os_version", "7.0");
-                    caps.setCapability("name", "VyTrack tests");
+                    caps.setCapability("name", "Etsy tests");
                     driverPool.set(new RemoteWebDriver(new URL(URL), caps));
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -105,12 +105,8 @@ public class Calculator_App {
         desiredCapabilities.setCapability(MobileCapabilityType.VERSION, "7.0");
         desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Pixel_2");
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
-
-        desiredCapabilities.setCapability("app", "https://cybertek-appium.s3.amazonaws.com/etsy.apk");
-//        desiredCapabilities.setCapability("app", "/data/app/com.etsy.android-1/base.apk");
-
+        desiredCapabilities.setCapability("app", "/data/app/com.etsy.android-1/base.apk");
         driver = new AppiumDriver<>(new URL("http://localhost:4723/wd/hub"), desiredCapabilities);
-
         Thread.sleep(3000);
 
         MobileElement searchBox = driver.findElement(MobileBy.id("com.etsy.android:id/search_src_text"));
@@ -149,9 +145,7 @@ public class Calculator_App {
         //otherwise, you can use apk info app to find this information
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
 
-        desiredCapabilities.setCapability("app", "https://cybertek-appium.s3.amazonaws.com/etsy.apk");
-//        desiredCapabilities.setCapability("app", "/data/app/com.etsy.android-1/base.apk");
-
+        desiredCapabilities.setCapability("app", "/data/app/com.etsy.android-1/base.apk");
         driver = new AppiumDriver<>(new URL("http://localhost:4723/wd/hub"), desiredCapabilities);
 
         Thread.sleep(3000);
